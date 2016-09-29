@@ -1,0 +1,313 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,900|Montserrat:400,700,900|Open+Sans:400,700,900|Raleway:400,700,900);
+/*-----------------------------------//
+//  MIXINS
+//-----------------------------------*/
+/*-----------------------------------//
+//  D.R.Y. CLASSES
+//-----------------------------------*/
+/*Text Aligns*/
+.textLeft {
+  text-align: left;
+}
+.textRight {
+  text-align: right;
+}
+.textCenter {
+  text-align: center;
+}
+
+/*-----------------------------------//
+//  GENERAL
+//-----------------------------------*/
+
+body {
+  background: #76b852; /* fallback for old browsers */
+  background: -webkit-linear-gradient(right, #76b852, #8DC26F);
+  background: -moz-linear-gradient(right, #76b852, #8DC26F);
+  background: -o-linear-gradient(right, #76b852, #8DC26F);
+  background: linear-gradient(to left, #76b852, #8DC26F);
+  font: 12px/1.0em "Montserrat";
+  font-family: "Montserrat", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoo
+}
+
+a {
+  text-decoration: none;
+  color: #E54B4B;
+}
+
+p em {
+  background: #f2f2f2;
+  color: #87878f;
+  padding: 0 2px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Montserrat";
+}
+
+hr {
+  margin: 1.5em 0;
+}
+
+.hide {
+  display: none;
+}
+
+/*-----------------------------------//
+//  TEMPLATE STYLES
+//-----------------------------------*/
+/* Buttons and Inputs */
+textarea,
+button,
+a.btn,
+select,
+input[type="text"],
+input[type="submit"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="file"]::-webkit-file-upload-button {
+  font-family: inherit !important;
+  font-size: 13px;
+  border: 1px solid #B0B0BA;
+  box-sizing: border-box;
+  padding: 5px;
+}
+
+a.btn,
+button,
+input[type="submit"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="file"]::-webkit-file-upload-button {
+  background: transparent;
+  display: inline-block;
+  padding: 6px 10px;
+  color: inherit;
+  font-weight: bold !important;
+  font-family: Montserrat;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/* Row */
+.row {
+  margin-bottom: 1.5%;
+  overflow: hidden;
+}
+.row:last-child {
+  margin: 0;
+}
+
+@media screen and (min-width: 480px) {
+  .hlf,
+  .trd,
+  .fth {
+    float: left;
+    margin-right: 1.5%;
+  }
+  .hlf:last-child,
+  .trd:last-child,
+  .fth:last-child {
+    margin: 0;
+    float: right;
+  }
+
+  .hlf {
+    width: 49.25%;
+  }
+
+  .trd {
+    width: 32.3%;
+  }
+
+  .fth {
+    width: 23.8%;
+  }
+}
+/* Box */
+.box {
+  width: 100%;
+  background: #fff;
+  box-sizing: border-box;
+  padding: 3%;
+  margin: 0 auto;
+  margin-bottom: 1.6%;
+  box-shadow: 0 3px 6px -4px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+@media screen and (min-width: 480px) {
+  .box {
+    padding: 2%;
+    margin-bottom: 2%;
+    max-width: 500px;
+  }
+}
+@media screen and (min-width: 765px) {
+  .box {
+    padding: 1.5%;
+    margin-bottom: 1.5%;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .box {
+    padding: 1.25%;
+    margin-bottom: 1.25%;
+  }
+}
+@media screen and (min-width: 1180px) {
+  .box {
+    padding: 1%;
+    margin-bottom: 1%;
+  }
+}
+
+/*-----------------------------------//
+//  PEN STYLES
+//-----------------------------------*/
+.tasker ul, .tasker li,
+.tasker .error,
+.tasker button,
+.tasker input {
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+.tasker-header button, .tasker-body .task button {
+  transition: all 0.2s ease;
+  -webkit-transition: all 0.2s ease;
+}
+
+/*PEN STYLES*/
+.tasker {
+  max-width: 400px;
+  margin: 0 auto;
+}
+.tasker .error {
+  display: none;
+  background: rgba(237, 28, 36, 0.7);
+  color: #fff;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+.tasker ul {
+  background: #fff;
+}
+.tasker li,
+.tasker .error,
+.tasker button,
+.tasker input {
+  font: 18px/1.25em Helvetica, Arial, Sans-serif;
+}
+
+.tasker-header {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  background: #ffffff;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 100%;
+}
+.tasker-header input{
+  color: #000;
+  box-sizing: border-box;
+  font-size: 1.25em;
+  padding: 14px;
+}
+.tasker-header button {
+  color: #fff;
+  box-sizing: border-box;
+  font-size: 1.25em;
+  padding: 14px;
+}
+.tasker-header input {
+  -webkit-box-flex: 2;
+  -webkit-flex-grow: 2;
+      -ms-flex-positive: 2;
+          flex-grow: 2;
+}
+.tasker-header button {
+  background: #1dd2af;
+  border-left: 1px solid #1eddb8;
+}
+.tasker-header button:hover {
+  background: #20e7c1;
+}
+
+.tasker-body .task {
+  display: block;
+  position: relative;
+  padding: 14px 40px 14px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.tasker-body .task:last-child {
+  border-bottom: none;
+}
+.tasker-body .task:hover > button {
+  opacity: 1;
+}
+.tasker-body .task.completed {
+  color: #EDEFF1;
+  text-decoration: line-through;
+}
+.tasker-body .task input {
+  margin-right: 10px;
+}
+.tasker-body .task button {
+  color: #EDEFF1;
+  margin: 14px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+}
+.tasker-body .task button:hover {
+  color: #ed1c24;
+}
+
+.tasker-logout {
+  display: -webkit-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  background: #313e50;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 100%;
+}
+.tasker-logout button {
+  color: #fff;
+  box-sizing: border-box;
+  font-size: 1.25em;
+  padding: 14px;
+}
+
+.tasker-logout button {
+  background: #FF6600;
+  width: 100%;
+}
+.tasker-logout button:hover {
+  background: #CC0000;
+}
+
+
+
