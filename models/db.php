@@ -11,24 +11,23 @@ class Database{
 
 	public function __construct($server_name, $database_name, $login, $password){
 
-		// Create connection
-		$this->connection = mysqli_connect($server_name, $login, $password) OR die(mysqli_connect_error());
+		mysqli_report(MYSQLI_REPORT_STRICT);
+
+		try {
+     		$this->connection = mysqli_connect($server_name, $login, $password);
+		} catch (Exception $e ) {
+     		ChromePhp::log('[ERROR] Can not connect to MySQL');
+			ChromePhp::log('[ERROR] Error number: ' . mysqli_connect_errno());
+			return false;
+		}
+
 		mysqli_set_charset($this->connection , "utf8");
 		
 		if (LOGGING){
 			ChromePhp::log('[INFO] Coneting to database with name: ' . $database_name);
 		}
-		mysqli_select_db($this->connection, $database_name);
 
-		// Check connection
-		if (!$this->connection) {
-			if (LOGGING){
-				ChromePhp::log('[ERROR] Can not connect to MySQL' . PHP_EOL);
-				ChromePhp::log('[ERROR] Error number: ' . mysqli_connect_errno() . PHP_EOL);
-				ChromePhp::log('[ERROR] Error text: ' . mysqli_connect_error() . PHP_EOL);
-		    }
-		    exit;
-		}
+		mysqli_select_db($this->connection, $database_name);
 
 		if (LOGGING){
 			ChromePhp::log('[SUCCESS] Connected to MySQL' . PHP_EOL);
@@ -36,8 +35,8 @@ class Database{
 		}
 
 		$this->is_connected = true;
+		return true;
 	}
-
 
 	public function Disconnect(){
 		// Close connection
@@ -114,6 +113,10 @@ class Database{
 			$row = mysqli_fetch_assoc($result);
 			$id_user = $row['id'];
 
+			// Здесь должен быть крутой и умный код генерации токена, который еще и со временем обновляется, но сдесь он глупый
+			// И да, может получиться у двух пользователей одинаковый токен, но, наверное, вероятность не так велика в масштабе 10-20 пользователей
+			// Я посторался передать лишь суть работы системы авторизации
+			// P.S. Я понимаю, что она дырявая
 			$token_to_insert = rand();
 
 			$result = mysqli_query($this->connection, "INSERT INTO sessions (token) 
@@ -132,10 +135,9 @@ class Database{
 		}
 	}
 
-	public function PostNewTaskForUserWithToken($token, $text, $status){
+	public function PostNewTaskForUserWithToken($token, $text){
 		$token = mysqli_real_escape_string($this->connection, $token);
 		$text = mysqli_real_escape_string($this->connection, $text);
-		$status = mysqli_real_escape_string($this->connection, $status);
 
 		$result = mysqli_query($this->connection, "SELECT id_user 
 												   FROM sessions AS S 
@@ -145,7 +147,7 @@ class Database{
 		$id_user = $row['id_user'];
 
 		$result = mysqli_query($this->connection, "INSERT INTO tasks (text, status) 
-										 		   VALUES ('$text', '$status');");
+										 		   VALUES ('$text', 'false');");
 		$result = mysqli_query($this->connection, "SELECT LAST_INSERT_ID() AS id;");
 		$row = mysqli_fetch_assoc($result);
 		$id_task = $row['id'];
@@ -193,9 +195,27 @@ class Database{
 		$id = mysqli_real_escape_string($this->connection, $id);
 
 		if ((mysqli_query($this->connection, "DELETE FROM tasks  
-												   WHERE id = '$id';")) &&
+											  WHERE id = '$id';")) &&
 			(mysqli_query($this->connection, "DELETE FROM users_to_tasks  
-												   WHERE id_task = '$id';"))){
+											  WHERE id_task = '$id';"))){
+			return true;		
+		} else {
+			return false;
+		}
+	}
+
+	public function ChangeTaskStatusForUserWithToken($token, $id, $status){
+		if (LOGGING){
+			ChromePhp::log('[INFO] ID of changing status task: ' . $id);
+		}
+
+		$token = mysqli_real_escape_string($this->connection, $token);
+		$id = mysqli_real_escape_string($this->connection, $id);
+		$status = mysqli_real_escape_string($this->connection, $status);
+
+		if (mysqli_query($this->connection, "UPDATE tasks
+											 SET status='$status'
+											 WHERE id='$id'")){
 			return true;		
 		} else {
 			return false;

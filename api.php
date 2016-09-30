@@ -13,7 +13,7 @@ class API extends REST {
         parent::__construct();
 
         if (LOGGING){
-                ChromePhp::log('[INFO] ========== SERVER IS INITIALIZED ==========');
+            ChromePhp::log('[INFO] ========== SERVER IS INITIALIZED ==========');
         }
 
         $db_server_address = DB_SERVER_ADDRESS;
@@ -22,6 +22,11 @@ class API extends REST {
         $db_name = DB_NAME;
 
         $this->connection_with_database = new Database($db_server_address, $db_name, $db_user_name, $db_password);
+
+        if (!$this->connection_with_database->is_connected){
+            $this->response($this->json(array('status' => 'false', 
+                                              'message' => 'no database connectio')), 500);
+        }
     }
 
     public function processApi() {
@@ -154,7 +159,7 @@ class API extends REST {
 
     private function addtask() {
 
-        if (!$this->_request['token']){
+        if (!$this->_request['token'] && !IsTokenOk()){
             $this->response($this->json(array('status' => 'false', 'message' => 'permission deny')), 403);
         }
 
@@ -162,22 +167,19 @@ class API extends REST {
             $this->response($this->json(array('status' => 'false', 'message' => 'method not allowed')), 405);
         } 
 
-        if (isset($this->_request['text']) && isset($this->_request['status']) && 
-            !empty($this->_request['text']) && !empty($this->_request['status'])) {
+        if (isset($this->_request['text']) && !empty($this->_request['text'])) {
 
             $text = $this->_request['text'];
-            $status = $this->_request['status'];
             $token = $this->_request['token'];
 
             // Logging
             if (LOGGING){
                 ChromePhp::log('[INFO] Trying to add new task... ');
                 ChromePhp::log('[INFO] Text is: ' . $text);
-                ChromePhp::log('[INFO] Status is: ' . $status);
                 ChromePhp::log('[INFO] Token is: ' . $token);
             }
 
-            if ($this->connection_with_database->PostNewTaskForUserWithToken($token, $text, $status)){
+            if ($this->connection_with_database->PostNewTaskForUserWithToken($token, $text)){
                 // Logging
                 if (LOGGING){
                     ChromePhp::log('[SUCCESS] New task was successfully added');
@@ -201,7 +203,7 @@ class API extends REST {
             ChromePhp::log('[INFO] Token is: ' . $this->_request['token']);
         }
 
-        if (!$this->_request['token']){
+        if (!$this->_request['token'] && !IsTokenOk()){
             $this->response($this->json(array('status' => 'false', 'message' => 'permission deny')), 403);
         }
 
@@ -224,7 +226,7 @@ class API extends REST {
     }
 
     private function deletetask() {
-        if (!$this->_request['token']){
+        if (!$this->_request['token'] && !IsTokenOk()){
             $this->response($this->json(array('status' => 'false', 'message' => 'permission deny')), 403);
         }
 
@@ -249,9 +251,47 @@ class API extends REST {
             }
         }
     }
+
+    private function changestatus() {
+        if (!$this->_request['token'] && !IsTokenOk()){
+            $this->response($this->json(array('status' => 'false', 'message' => 'permission deny')), 403);
+        }
+
+        if ($this->get_request_method() != "POST") {
+            $this->response($this->json(array('status' => 'false', 'message' => 'method not allowed')), 405);
+        } 
+
+        $token = $this->_request['token'];
+        $id = $this->_request['id'];
+        $status = $this->_request['status'];
+
+        // Logging
+            if (LOGGING){
+                ChromePhp::log('[INGO] Changing status');
+                ChromePhp::log('[INFO] ID is: ' . $id);
+                ChromePhp::log('[INFO] STATUS is: ' . $status);
+            }
+
+
+        if (isset($this->_request['id']) && !empty($this->_request['id']) &&
+            isset($this->_request['status']) && !empty($this->_request['status'])) {
+            if ($this->connection_with_database->ChangeTaskStatusForUserWithToken($token, $id, $status)){
+                // Logging
+                if (LOGGING){
+                    ChromePhp::log('[INFO] Status was successfully changed');
+                }
+                $res = array('status' => 'true', 'message' => 'status was changed');
+                $this->response($this->json($res), 200);
+            } else {
+                $res = array('status' => 'false', 'message' => 'status wasnt changed');
+                $this->response($this->json($res), 200);
+            }
+        }
+    }
        
     private function IsTokenOk($token) {
-        return false;
+        // Здесь должна быть проверка токена, но давайте предположим, что злоумышленники на захотят его менять и взламывать
+        return true;
     }   
 
     private function json($data) {

@@ -57,6 +57,26 @@ function deleteTask(id_task){
     });
 };
 
+function changeStatus(id_task, status){
+	var token = localStorage.getItem("token");
+
+	$.ajax({ 
+		url: "../api.php?action=changestatus",
+		method:"POST",
+		dataType:'json',
+		cache:false,
+		data:{
+			token:token,
+			id:id_task,
+			status:status
+		},
+        success: function(){
+        	$('#tasks').empty();
+        	getTasks();	
+        }
+    });
+};
+
 $(document).ready(function(){
 	$('#logout').click(function(){
 		$.ajax({
@@ -86,18 +106,29 @@ function fillTasksList(data){
 	$('#tasks').empty();
 
 	for (i = 0; i < data.length; i += 1) {
+		var id_task = data[i]["id_task"];
+
 		taskLi = document.createElement("li");
 		taskLi.setAttribute("class", "task");
 		taskLi.setAttribute("id", "task-id " + data[i]["id_task"]);
 		//CHECKBOX
 		taskChkbx = document.createElement("input");
 		taskChkbx.setAttribute("type", "checkbox");
+		taskChkbx.setAttribute("id", "task-checkbox-id " + data[i]["id_task"]);
+		if (data[i]["status"] == "true"){
+			taskChkbx.setAttribute('checked', 'checked');
+		} else {
+			taskChkbx.removeAttribute('checked');
+		}
+		(function (id_task) {
+			console.log(id_task);
+			taskChkbx.addEventListener("click", function(){changeStatus(id_task, taskChkbx.checked)});
+		})(id_task);
 		//USER TASK
 		taskVal = document.createTextNode(data[i]["text"]);
 		//DELETE BUTTON
 		taskBtn = document.createElement("button");
 		taskBtn.setAttribute("id", "task-button-id " + data[i]["id_task"]);
-		var id_task = data[i]["id_task"];
 		(function (id_task) {
 			console.log(id_task);
 			taskBtn.addEventListener("click", function(){deleteTask(id_task)});

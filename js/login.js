@@ -55,9 +55,9 @@ $(document).ready(function(){
 				},
 				cache:false,
 				success:function(data){
-					if(data){
-						console.log(data);
-					}
+					$("#info").empty();
+					$("#info").append("<p>Вы были успешно зарегистрированы, используйте теперь эти данные для входа.</p>");	
+  					$('form').animate({height: "toggle", opacity: "toggle"}, "slow");
 				}
 			});
 		}
