@@ -185,6 +185,10 @@ class Database{
 	}
 
 	public function DeleteTaskForUserWithToken($token, $id){
+		if (LOGGING){
+			ChromePhp::log('[INFO] ID of deleting task: ' . $id);
+		}
+
 		$token = mysqli_real_escape_string($this->connection, $token);
 		$id = mysqli_real_escape_string($this->connection, $id);
 

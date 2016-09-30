@@ -34,14 +34,13 @@ function getTasks(){
 			token:token
 		},
         success: function(data){
-           fillTasksList(data);	
+        	fillTasksList(data);	
         }
     });
 };
 
-function deleteTask(id){
+function deleteTask(id_task){
 	var token = localStorage.getItem("token");
-
 	$.ajax({ 
 		url: "../api.php?action=deletetask",
 		method:"POST",
@@ -49,10 +48,11 @@ function deleteTask(id){
 		cache:false,
 		data:{
 			token:token,
-			id:id
+			id:id_task
 		},
         success: function(){
-           getTasks();	
+        	$('#tasks').empty();
+        	getTasks();	
         }
     });
 };
@@ -84,7 +84,6 @@ function fillTasksList(data){
 
 	var tasklist = document.getElementById("tasks");
 	$('#tasks').empty();
-	var tasklistChildren = tasklist.children;
 
 	for (i = 0; i < data.length; i += 1) {
 		taskLi = document.createElement("li");
@@ -99,11 +98,10 @@ function fillTasksList(data){
 		taskBtn = document.createElement("button");
 		taskBtn.setAttribute("id", "task-button-id " + data[i]["id_task"]);
 		var id_task = data[i]["id_task"];
-		
-		taskBtn.addEventListener("click", function(){ deleteTask(id_task) });
-
-		//taskBtn.onclick(deleteTask(id_task));
-
+		(function (id_task) {
+			console.log(id_task);
+			taskBtn.addEventListener("click", function(){deleteTask(id_task)});
+		})(id_task);
 		//TRASH ICON
 		taskTrsh = document.createElement("i");
 		taskTrsh.setAttribute("class", "fa fa-trash");
@@ -143,7 +141,6 @@ $(document).ready(function(){
 		init: function() {
 			this.cacheDom();
 			this.bindEvents();
-			this.evalTasklist();
 		},
 		cacheDom: function() {
 			this.taskInput = document.getElementById("input-task");
@@ -155,28 +152,6 @@ $(document).ready(function(){
 		bindEvents: function() {
 			this.addBtn.onclick = this.addTask.bind(this);
 			this.taskInput.onkeypress = this.enterKey.bind(this);
-		},
-		evalTasklist: function() {
-			var i, chkBox, delBtn;
-			//BIND CLICK EVENTS TO ELEMENTS
-			for (i = 0; i < this.tasklistChildren.length; i += 1) {
-				//ADD CLICK EVENT TO CHECKBOXES
-				chkBox = this.tasklistChildren[i].getElementsByTagName("input")[0];
-				chkBox.onclick = this.completeTask.bind(this, this.tasklistChildren[i], chkBox);
-				//ADD CLICK EVENT TO DELETE BUTTON
-				delBtn = this.tasklistChildren[i].getElementsByTagName("button")[0];
-				delBtn.onclick = this.delTask.bind(this, i);
-			}
-		},
-		completeTask: function(i, chkBox) {
-			if (chkBox.checked) {
-				i.className = "task completed";
-			} else {
-				this.incompleteTask(i);
-			}
-		},
-		incompleteTask: function(i) {
-			i.className = "task";
 		},
 		enterKey: function(event) {
 			if (event.keyCode === 13 || event.which === 13) {
@@ -193,11 +168,6 @@ $(document).ready(function(){
 				sendTask();
 				this.taskInput.value = "";
 			}
-		},
-		delTask: function(i) {
-			console.log(i);
-			deleteTask(i);
-			this.evalTasklist();
 		},
 		error: function() {
 			this.errorMessage.style.display = "block";
